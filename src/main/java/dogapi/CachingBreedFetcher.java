@@ -14,15 +14,34 @@ import java.util.*;
  */
 public class CachingBreedFetcher implements BreedFetcher {
     // TODO Task 2: Complete this class
+    private final BreedFetcher fetcher; // the real fetcher (like DogApiBreedFetcher)
+    private final Map<String, List<String>> cache = new HashMap<>(); // store results here
     private int callsMade = 0;
-    public CachingBreedFetcher(BreedFetcher fetcher) {
 
+    public CachingBreedFetcher(BreedFetcher fetcher) {
+        this.fetcher = fetcher;
     }
 
     @Override
-    public List<String> getSubBreeds(String breed) {
+    public List<String> getSubBreeds(String breed) throws BreedNotFoundException {
         // return statement included so that the starter code can compile and run.
-        return new ArrayList<>();
+        // If we already cached the breed, return the cached value
+        if (cache.containsKey(breed)) {
+            return cache.get(breed);
+        }
+
+        try {
+            // Increment callsMade BEFORE calling the fetcher
+            callsMade++;
+
+            List<String> subBreeds = fetcher.getSubBreeds(breed); // may throw exception
+            cache.put(breed, subBreeds); // only cache if it succeeds
+            return subBreeds;
+
+        } catch (BreedNotFoundException e) {
+            // Don't cache failures
+            throw e;
+        }
     }
 
     public int getCallsMade() {
