@@ -13,7 +13,6 @@ import java.util.*;
  * The cache maps the name of a breed to its list of sub breed names.
  */
 public class CachingBreedFetcher implements BreedFetcher {
-    // TODO Task 2: Complete this class
     private final BreedFetcher fetcher; // the real fetcher (like DogApiBreedFetcher)
     private final Map<String, List<String>> cache = new HashMap<>(); // store results here
     private int callsMade = 0;
